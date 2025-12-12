@@ -87,6 +87,13 @@ export const api = {
       }),
   },
 
+  // ========== ADMIN MANAGEMENT ==========
+  // Admin (requires auth - superadmin only)
+  getAdminAdmins: (params?: Record<string, string>) => {
+    const query = params ? `?${new URLSearchParams(params)}` : '';
+    return adminFetch(`/api/admin/all${query}`);
+  },
+
   // ========== EVENTS ==========
   // Public
   getEvents: (params?: Record<string, string>) => {
@@ -264,60 +271,53 @@ export interface EventInput {
 
 export interface CreatorInput {
   name: string;
-  role?: string;
   bio?: string;
-  avatar?: string;
-  expertise?: string[];
-  social?: {
-    twitter?: string;
-    github?: string;
-    linkedin?: string;
-    website?: string;
+  profileImage?: string;
+  socialMedia?: Array<{
+    platform: string;
+    url: string;
+  }>;
+  creatorCoin?: {
+    symbol: string;
+    marketCap: number;
+    price: number;
+    change24h: number;
   };
-  stats?: {
-    projects?: number;
-    followers?: string;
-    contributions?: number;
-  };
-  featured?: boolean;
-  published?: boolean;
-  color?: 'mint' | 'gold';
+  followers?: string;
 }
 
 export interface ProjectInput {
   title: string;
-  description?: string;
-  category?: string;
-  difficulty?: string;
-  estimatedTime?: string;
-  technologies?: string[];
-  learningOutcomes?: string[];
-  prerequisites?: string[];
-  steps?: Array<{
-    title: string;
-    content: string;
-    order: number;
-  }>;
-  resources?: Array<{
-    title: string;
+  creator: string;
+  description: string;
+  tech: string[];
+  status: string;
+  users: string;
+  tvl: string;
+  image?: string;
+  githubUrl?: string;
+  socialMedia?: Array<{
+    platform: string;
     url: string;
-    type: string;
   }>;
-  published?: boolean;
+  websiteUrl?: string;
 }
 
 export interface ResourceInput {
   title: string;
   description?: string;
   category?: string;
-  type?: 'guide' | 'tutorial' | 'documentation' | 'tool' | 'video' | 'course' | string;
-  url?: string;
+  type?: string;
+  resourceUrl?: string;
   image?: string;
   tags?: string[];
   author?: string;
-  readTime?: string;
-  difficulty?: 'beginner' | 'intermediate' | 'advanced';
-  published?: boolean;
+  duration?: string;
+  level?: string;
+  rating?: number;
+  students?: number;
+  provider?: string;
+  featured?: boolean;
 }
 
 export interface BlogInput {
