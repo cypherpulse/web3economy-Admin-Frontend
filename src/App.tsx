@@ -14,6 +14,7 @@ import Blogs from "@/pages/admin/Blogs";
 import Showcase from "@/pages/admin/Showcase";
 import Newsletter from "@/pages/admin/Newsletter";
 import Contacts from "@/pages/admin/Contacts";
+import Admins from "@/pages/admin/Admins";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -37,6 +38,7 @@ const App = () => (
               <Route path="showcase" element={<Showcase />} />
               <Route path="newsletter" element={<Newsletter />} />
               <Route path="contacts" element={<Contacts />} />
+              <Route path="admins" element={<Admins />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
