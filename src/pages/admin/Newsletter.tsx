@@ -18,24 +18,26 @@ import { Badge } from '@/components/ui/badge';
 interface Subscriber {
   id: string;
   email: string;
-  name: string;
-  interests: string[];
-  subscribedAt: string;
+  source?: string;
+  status?: string;
+  subscribedAt?: string;
+  createdAt?: string;
 }
 
 const columns = [
   { key: 'email', label: 'Email' },
-  { key: 'name', label: 'Name' },
   {
-    key: 'interests',
-    label: 'Interests',
-    render: (value: string[]) => (
-      <div className="flex gap-1 flex-wrap">
-        {value?.slice(0, 2).map((interest) => (
-          <Badge key={interest} variant="secondary" className="text-xs">{interest}</Badge>
-        ))}
-        {value?.length > 2 && <Badge variant="outline">+{value.length - 2}</Badge>}
-      </div>
+    key: 'source',
+    label: 'Source',
+    render: (value: string) => value || 'Unknown',
+  },
+  {
+    key: 'status',
+    label: 'Status',
+    render: (value: string) => (
+      <Badge variant={value === 'active' ? 'default' : 'secondary'} className="text-xs">
+        {value || 'active'}
+      </Badge>
     ),
   },
   {
@@ -56,7 +58,8 @@ export default function Newsletter() {
     try {
       const response = await api.getSubscribers({ limit: '100' });
       if (response.success) {
-        setSubscribers((response.data as any)?.subscribers || []);
+        const subscribers = (response.data as { subscribers: Subscriber[] })?.subscribers || (response.data as Subscriber[]) || [];
+        setSubscribers(subscribers);
       }
     } catch (error) {
       toast.error('Failed to fetch subscribers');
