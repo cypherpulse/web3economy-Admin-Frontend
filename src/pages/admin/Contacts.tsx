@@ -23,26 +23,27 @@ import { Badge } from '@/components/ui/badge';
 
 interface Contact {
   id: string;
-  name: string;
+  fullName: string;
   email: string;
+  company?: string;
   subject: string;
   message: string;
-  type: string;
-  status: string;
-  createdAt: string;
+  subscribeNewsletter: boolean;
+  submittedAt: string;
 }
 
 const columns = [
-  { key: 'name', label: 'Name' },
+  { key: 'fullName', label: 'Name' },
   { key: 'email', label: 'Email' },
+  { key: 'company', label: 'Company' },
   { key: 'subject', label: 'Subject' },
   {
-    key: 'type',
-    label: 'Type',
-    render: (value: string) => <Badge variant="outline">{value}</Badge>,
+    key: 'subscribeNewsletter',
+    label: 'Newsletter',
+    render: (value: boolean) => <Badge variant={value ? 'default' : 'secondary'}>{value ? 'Yes' : 'No'}</Badge>,
   },
   {
-    key: 'createdAt',
+    key: 'submittedAt',
     label: 'Date',
     render: (value: string) => value ? new Date(value).toLocaleDateString() : '-',
   },
@@ -60,7 +61,8 @@ export default function Contacts() {
     try {
       const response = await api.getContacts({ limit: '100' });
       if (response.success) {
-        setContacts((response.data as any)?.contacts || []);
+        const contacts = (response.data as { contacts: Contact[] })?.contacts || (response.data as Contact[]) || [];
+        setContacts(contacts);
       }
     } catch (error) {
       toast.error('Failed to fetch contacts');
@@ -111,21 +113,29 @@ export default function Contacts() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-muted-foreground">Name</p>
-                  <p className="font-medium">{selectedContact.name}</p>
+                  <p className="font-medium">{selectedContact.fullName}</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Email</p>
                   <p className="font-medium">{selectedContact.email}</p>
                 </div>
               </div>
+              {selectedContact.company && (
+                <div>
+                  <p className="text-sm text-muted-foreground">Company</p>
+                  <p className="font-medium">{selectedContact.company}</p>
+                </div>
+              )}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-muted-foreground">Type</p>
-                  <Badge variant="outline">{selectedContact.type}</Badge>
+                  <p className="text-sm text-muted-foreground">Newsletter Subscription</p>
+                  <Badge variant={selectedContact.subscribeNewsletter ? 'default' : 'secondary'}>
+                    {selectedContact.subscribeNewsletter ? 'Subscribed' : 'Not Subscribed'}
+                  </Badge>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Date</p>
-                  <p className="font-medium">{new Date(selectedContact.createdAt).toLocaleString()}</p>
+                  <p className="font-medium">{new Date(selectedContact.submittedAt).toLocaleString()}</p>
                 </div>
               </div>
               <div>
@@ -145,7 +155,7 @@ export default function Contacts() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Contact</AlertDialogTitle>
-            <AlertDialogDescription>Are you sure you want to delete this message from "{selectedContact?.name}"? This action cannot be undone.</AlertDialogDescription>
+            <AlertDialogDescription>Are you sure you want to delete this message from "{selectedContact?.fullName}"? This action cannot be undone.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
